@@ -1,10 +1,10 @@
 from sqlalchemy import String
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.database.base import Base
+from app.models.base_model import BaseModel
 
 
-class Asset(Base):
+class Asset(BaseModel):
     __tablename__ = "assets"
 
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -28,4 +28,10 @@ class Asset(Base):
     owner: Mapped[str] = mapped_column(
         String(100),
         nullable=False,
+    )
+
+    vulnerabilities = relationship(
+        "Vulnerability",
+        back_populates="asset",
+        cascade="all, delete-orphan",
     )
