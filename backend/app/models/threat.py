@@ -1,7 +1,8 @@
-from sqlalchemy import Integer, String, Text
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy import Enum, Integer, String, Text
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base_model import BaseModel
+from app.models.enums import SeverityEnum
 
 
 class Threat(BaseModel):
@@ -11,7 +12,10 @@ class Threat(BaseModel):
 
     name: Mapped[str] = mapped_column(String(255), nullable=False)
 
-    severity: Mapped[str] = mapped_column(String(50), nullable=False)
+    severity: Mapped[SeverityEnum] = mapped_column(
+        Enum(SeverityEnum),
+        nullable=False,
+    )
 
     category: Mapped[str] = mapped_column(String(100), nullable=False)
 
@@ -20,3 +24,9 @@ class Threat(BaseModel):
     description: Mapped[str] = mapped_column(Text, nullable=False)
 
     ioc: Mapped[str] = mapped_column(Text, nullable=False)
+
+    incidents = relationship(
+        "Incident",
+        back_populates="threat",
+        cascade="all, delete-orphan",
+    )

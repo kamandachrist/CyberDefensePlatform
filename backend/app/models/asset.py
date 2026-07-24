@@ -35,3 +35,10 @@ class Asset(BaseModel):
         back_populates="asset",
         cascade="all, delete-orphan",
     )
+
+
+    incidents = relationship(
+        "Incident",
+        back_populates="asset",
+        cascade="all, delete-orphan",
+    )
