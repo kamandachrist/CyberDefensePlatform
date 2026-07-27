@@ -2,12 +2,12 @@ from sqlalchemy.orm import Session
 
 from app.repositories.asset_repository import (
     create_asset,
+    delete_asset,
     get_asset,
     get_assets,
-    delete_asset,
+    update_asset,
 )
-
-from app.schemas.asset import AssetCreate
+from app.schemas.asset import AssetCreate, AssetUpdate
 
 
 def create_new_asset(
@@ -36,6 +36,26 @@ def retrieve_asset(
     )
 
 
+def update_existing_asset(
+    db: Session,
+    asset_id: int,
+    asset_data: AssetUpdate,
+):
+    asset = get_asset(
+        db,
+        asset_id,
+    )
+
+    if not asset:
+        return None
+
+    return update_asset(
+        db,
+        asset,
+        asset_data,
+    )
+
+
 def remove_asset(
     db: Session,
     asset_id: int,
@@ -45,10 +65,12 @@ def remove_asset(
         asset_id,
     )
 
-    if asset:
-        delete_asset(
-            db,
-            asset,
-        )
+    if not asset:
+        return None
+
+    delete_asset(
+        db,
+        asset,
+    )
 
     return asset
