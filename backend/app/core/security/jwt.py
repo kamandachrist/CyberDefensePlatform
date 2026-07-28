@@ -2,8 +2,9 @@ from datetime import datetime, timedelta, timezone
 
 from jose import jwt
 
+from app.core.config import settings
 
-SECRET_KEY = "CHANGE_THIS_TO_A_RANDOM_SECRET_KEY"
+
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
 
@@ -25,7 +26,7 @@ def create_access_token(
 
     encoded_jwt = jwt.encode(
         to_encode,
-        SECRET_KEY,
+        settings.SECRET_KEY,
         algorithm=ALGORITHM,
     )
 
@@ -35,6 +36,6 @@ def create_access_token(
 def decode_access_token(token: str):
     return jwt.decode(
         token,
-        SECRET_KEY,
+        settings.SECRET_KEY,
         algorithms=[ALGORITHM],
     )
