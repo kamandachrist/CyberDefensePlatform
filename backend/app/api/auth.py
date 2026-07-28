@@ -1,4 +1,5 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Form
+
 from sqlalchemy.orm import Session
 
 from app.database.session import get_db
@@ -30,13 +31,15 @@ def register(
 
 @router.post("/login")
 def login(
-    user: UserLogin,
+    username: str = Form(...),
+    password: str = Form(...),
     db: Session = Depends(get_db),
 ):
+
     token = login_user(
         db,
-        user.username,
-        user.password,
+        username,
+        password,
     )
 
     if not token:
