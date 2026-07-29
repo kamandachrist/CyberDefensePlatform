@@ -2,29 +2,29 @@ from enum import Enum
 
 
 class AssetCriticality(str, Enum):
-    critical = "critical"
-    high = "high"
-    medium = "medium"
-    low = "low"
+    CRITICAL = "critical"
+    HIGH = "high"
+    MEDIUM = "medium"
+    LOW = "low"
 
 
 class AssetStatus(str, Enum):
-    online = "online"
-    offline = "offline"
-    maintenance = "maintenance"
+    ONLINE = "online"
+    OFFLINE = "offline"
+    MAINTENANCE = "maintenance"
 
 
 class AssetEnvironment(str, Enum):
-    production = "production"
-    development = "development"
-    testing = "testing"
+    PRODUCTION = "production"
+    DEVELOPMENT = "development"
+    TESTING = "testing"
 
 
 class AssetType(str, Enum):
-    server = "server"
-    workstation = "workstation"
-    laptop = "laptop"
-    network_device = "network_device"
-    database = "database"
-    firewall = "firewall"
-    application = "application"
+    SERVER = "server"
+    WORKSTATION = "workstation"
+    LAPTOP = "laptop"
+    NETWORK_DEVICE = "network_device"
+    DATABASE = "database"
+    FIREWALL = "firewall"
+    APPLICATION = "application"
