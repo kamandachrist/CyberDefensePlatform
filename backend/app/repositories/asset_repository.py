@@ -10,11 +10,18 @@ def create_asset(
     db: Session,
     asset_data: AssetCreate,
 ) -> Asset:
+
     asset = Asset(
         hostname=asset_data.hostname,
         ip_address=asset_data.ip_address,
         operating_system=asset_data.operating_system,
         owner=asset_data.owner,
+
+        asset_type=asset_data.asset_type,
+        criticality=asset_data.criticality,
+        environment=asset_data.environment,
+        status=asset_data.status,
+        last_seen=asset_data.last_seen,
     )
 
     db.add(asset)
