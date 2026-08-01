@@ -44,6 +44,21 @@ def get_incidents(
     return db.query(Incident).all()
 
 
+def update_incident(
+    db: Session,
+    incident: Incident,
+    updates: dict,
+) -> Incident:
+
+    for field, value in updates.items():
+        setattr(incident, field, value)
+
+    db.commit()
+    db.refresh(incident)
+
+    return incident
+
+
 def delete_incident(
     db: Session,
     incident: Incident,

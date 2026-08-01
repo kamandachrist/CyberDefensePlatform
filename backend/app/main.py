@@ -4,6 +4,10 @@ from app.api.assets import router as assets_router
 from app.api.auth import router as auth_router
 from app.api.users import router as users_router
 from app.api.admin import router as admin_router
+from app.api.vulnerabilities import router as vulnerabilities_router
+from app.api.threats import router as threats_router
+from app.api.incidents import router as incidents_router
+
 
 app = FastAPI(
     title="Cyber Defense Platform",
@@ -15,6 +19,9 @@ app.include_router(users_router)
 app.include_router(assets_router)
 app.include_router(auth_router)
 app.include_router(admin_router)
+app.include_router(vulnerabilities_router)
+app.include_router(threats_router)
+app.include_router(incidents_router)
 
 
 @app.get("/")

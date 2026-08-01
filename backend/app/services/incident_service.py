@@ -4,10 +4,14 @@ from app.repositories.incident_repository import (
     create_incident,
     get_incident,
     get_incidents,
+    update_incident,
     delete_incident,
 )
 
-from app.schemas.incident import IncidentCreate
+from app.schemas.incident import (
+    IncidentCreate,
+    IncidentUpdate,
+)
 
 
 def create_new_incident(
@@ -33,6 +37,30 @@ def retrieve_incident(
     return get_incident(
         db,
         incident_id,
+    )
+
+
+def update_existing_incident(
+    db: Session,
+    incident_id: int,
+    incident_data: IncidentUpdate,
+):
+    incident = get_incident(
+        db,
+        incident_id,
+    )
+
+    if not incident:
+        return None
+
+    updates = incident_data.model_dump(
+        exclude_unset=True,
+    )
+
+    return update_incident(
+        db,
+        incident,
+        updates,
     )
 
 

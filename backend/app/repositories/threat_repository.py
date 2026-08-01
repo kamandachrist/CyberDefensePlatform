@@ -8,6 +8,7 @@ def create_threat(
     db: Session,
     threat_data: ThreatCreate,
 ) -> Threat:
+
     threat = Threat(
         name=threat_data.name,
         severity=threat_data.severity,
@@ -28,6 +29,7 @@ def get_threat(
     db: Session,
     threat_id: int,
 ) -> Threat | None:
+
     return (
         db.query(Threat)
         .filter(Threat.id == threat_id)
@@ -38,12 +40,29 @@ def get_threat(
 def get_threats(
     db: Session,
 ) -> list[Threat]:
+
     return db.query(Threat).all()
+
+
+def update_threat(
+    db: Session,
+    threat: Threat,
+    updates: dict,
+) -> Threat:
+
+    for field, value in updates.items():
+        setattr(threat, field, value)
+
+    db.commit()
+    db.refresh(threat)
+
+    return threat
 
 
 def delete_threat(
     db: Session,
     threat: Threat,
 ) -> None:
+
     db.delete(threat)
     db.commit()
