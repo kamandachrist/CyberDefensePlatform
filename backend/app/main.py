@@ -7,6 +7,7 @@ from app.api.admin import router as admin_router
 from app.api.vulnerabilities import router as vulnerabilities_router
 from app.api.threats import router as threats_router
 from app.api.incidents import router as incidents_router
+from app.api.risk import router as risk_router
 from app.api import dashboard
 
 
@@ -23,6 +24,7 @@ app.include_router(admin_router)
 app.include_router(vulnerabilities_router)
 app.include_router(threats_router)
 app.include_router(incidents_router)
+app.include_router(risk_router)
 app.include_router(dashboard.router)
 
 
@@ -39,4 +41,3 @@ def health():
     return {
         "status": "healthy",
     }
-
