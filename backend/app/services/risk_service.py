@@ -1,7 +1,14 @@
 from sqlalchemy.orm import Session
 
-from app.repositories.risk_repository import get_asset_risk_data
-from app.schemas.risk import AssetRiskResponse, RiskFactor
+from app.repositories.risk_repository import (
+    get_all_assets,
+    get_asset_risk_data,
+)
+from app.schemas.risk import (
+    AssetRiskListResponse,
+    AssetRiskResponse,
+    RiskFactor,
+)
 
 
 def calculate_vulnerability_score(vulnerabilities) -> float:
@@ -213,4 +220,32 @@ def calculate_asset_risk(
         incident_score=incident_score,
         asset_criticality_score=asset_criticality_score,
         risk_factors=risk_factors,
+    )
+
+
+def calculate_all_asset_risks(
+    db: Session,
+) -> AssetRiskListResponse:
+
+    assets = get_all_assets(db)
+
+    risk_results = []
+
+    for asset in assets:
+        risk = calculate_asset_risk(
+            db,
+            asset.id,
+        )
+
+        if risk is not None:
+            risk_results.append(risk)
+
+    risk_results.sort(
+        key=lambda item: item.risk_score,
+        reverse=True,
+    )
+
+    return AssetRiskListResponse(
+        total_assets=len(risk_results),
+        assets=risk_results,
     )

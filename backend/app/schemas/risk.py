@@ -35,3 +35,8 @@ class AssetRiskResponse(BaseModel):
     )
 
     risk_factors: list[RiskFactor]
+
+
+class AssetRiskListResponse(BaseModel):
+    total_assets: int
+    assets: list[AssetRiskResponse]

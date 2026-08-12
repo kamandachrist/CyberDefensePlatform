@@ -2,14 +2,30 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.database.session import get_db
-from app.schemas.risk import AssetRiskResponse
-from app.services.risk_service import calculate_asset_risk
+from app.schemas.risk import (
+    AssetRiskListResponse,
+    AssetRiskResponse,
+)
+from app.services.risk_service import (
+    calculate_all_asset_risks,
+    calculate_asset_risk,
+)
 
 
 router = APIRouter(
     prefix="/risk",
     tags=["Risk"],
 )
+
+
+@router.get(
+    "/assets",
+    response_model=AssetRiskListResponse,
+)
+def get_all_asset_risks(
+    db: Session = Depends(get_db),
+):
+    return calculate_all_asset_risks(db)
 
 
 @router.get(

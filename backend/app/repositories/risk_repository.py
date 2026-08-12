@@ -35,3 +35,14 @@ def get_asset_risk_data(
         "vulnerabilities": vulnerabilities,
         "incidents": incidents,
     }
+
+
+
+def get_all_assets(
+    db: Session,
+):
+    return (
+        db.query(Asset)
+        .order_by(Asset.id)
+        .all()
+    )
