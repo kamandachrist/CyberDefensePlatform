@@ -8,6 +8,14 @@ def calculate_vulnerability_score(vulnerabilities) -> float:
     if not vulnerabilities:
         return 0.0
 
+    status_multipliers = {
+        "open": 1.0,
+        "in_progress": 0.75,
+        "patched": 0.10,
+        "resolved": 0.10,
+        "closed": 0.05,
+    }
+
     total_score = 0.0
 
     for vulnerability in vulnerabilities:
@@ -18,12 +26,19 @@ def calculate_vulnerability_score(vulnerabilities) -> float:
         elif cvss > 10:
             cvss = 10.0
 
-        total_score += cvss
+        status = vulnerability.status.lower()
 
-    maximum_score = len(vulnerabilities) * 10
+        multiplier = status_multipliers.get(
+            status,
+            1.0,
+        )
+
+        total_score += (
+            (cvss / 10) * 100 * multiplier
+        )
 
     return round(
-        (total_score / maximum_score) * 100,
+        total_score / len(vulnerabilities),
         2,
     )
 
@@ -40,14 +55,32 @@ def calculate_incident_score(incidents) -> float:
         "Informational": 10.0,
     }
 
+    status_multipliers = {
+        "Open": 1.0,
+        "Investigating": 0.90,
+        "Contained": 0.50,
+        "Resolved": 0.10,
+        "Closed": 0.05,
+    }
+
     total_score = 0.0
 
     for incident in incidents:
         severity = incident.severity.value
+        status = incident.status.value
 
-        total_score += severity_scores.get(
+        severity_score = severity_scores.get(
             severity,
             0.0,
+        )
+
+        status_multiplier = status_multipliers.get(
+            status,
+            1.0,
+        )
+
+        total_score += (
+            severity_score * status_multiplier
         )
 
     return round(
