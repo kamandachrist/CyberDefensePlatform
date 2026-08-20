@@ -44,6 +44,11 @@ class Asset(BaseModel):
         cascade="all, delete-orphan",
     )
 
+    alerts = relationship(
+        "Alert",
+        back_populates="asset",
+    )
+
     asset_type: Mapped[str] = mapped_column(
         String(50),
         nullable=False,

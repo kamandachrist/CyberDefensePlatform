@@ -1,10 +1,12 @@
 from sqlalchemy.orm import Session
 
 from app.repositories.risk_repository import (
+    get_alert_risk_data,
     get_all_assets,
     get_asset_risk_data,
 )
 from app.schemas.risk import (
+    AlertPriorityResponse,
     AssetRiskListResponse,
     AssetRiskResponse,
     RiskFactor,
@@ -248,4 +250,121 @@ def calculate_all_asset_risks(
     return AssetRiskListResponse(
         total_assets=len(risk_results),
         assets=risk_results,
+    )
+
+
+def calculate_alert_severity_score(alert) -> float:
+    severity_scores = {
+        "Critical": 100.0,
+        "High": 75.0,
+        "Medium": 50.0,
+        "Low": 25.0,
+        "Informational": 10.0,
+    }
+
+    severity = alert.severity.value
+
+    return severity_scores.get(
+        severity,
+        0.0,
+    )
+
+
+def determine_alert_priority(priority_score: float) -> str:
+    if priority_score >= 80:
+        return "Critical"
+
+    if priority_score >= 60:
+        return "High"
+
+    if priority_score >= 30:
+        return "Medium"
+
+    return "Low"
+
+
+def generate_alert_recommendation(priority: str) -> str:
+    recommendations = {
+        "Critical": (
+            "Immediate investigation required. "
+            "Escalate to the incident response team."
+        ),
+        "High": (
+            "Investigate immediately and assign "
+            "to a SOC analyst."
+        ),
+        "Medium": (
+            "Investigate during normal SOC operations "
+            "and monitor for escalation."
+        ),
+        "Low": (
+            "Monitor the alert and investigate "
+            "if additional suspicious activity occurs."
+        ),
+    }
+
+    return recommendations.get(
+        priority,
+        "Monitor the alert.",
+    )
+
+
+def calculate_alert_priority(
+    db: Session,
+    alert_id: int,
+) -> AlertPriorityResponse | None:
+
+    alert = get_alert_risk_data(
+        db,
+        alert_id,
+    )
+
+    if not alert:
+        return None
+
+    asset_risk = calculate_asset_risk(
+        db,
+        alert.asset_id,
+    )
+
+    if asset_risk is None:
+        return None
+
+    alert_severity_score = calculate_alert_severity_score(
+        alert
+    )
+
+    alert_severity_weight = 0.60
+    asset_risk_weight = 0.40
+
+    priority_score = round(
+        (
+            alert_severity_score
+            * alert_severity_weight
+        )
+        + (
+            asset_risk.risk_score
+            * asset_risk_weight
+        ),
+        2,
+    )
+
+    priority = determine_alert_priority(
+        priority_score
+    )
+
+    recommendation = generate_alert_recommendation(
+        priority
+    )
+
+    return AlertPriorityResponse(
+        alert_id=alert.id,
+        asset_id=alert.asset_id,
+        title=alert.title,
+        alert_severity=alert.severity.value,
+        alert_severity_score=alert_severity_score,
+        asset_risk_score=asset_risk.risk_score,
+        priority_score=priority_score,
+        priority=priority,
+        recommendation=recommendation,
     )

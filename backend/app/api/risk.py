@@ -3,10 +3,12 @@ from sqlalchemy.orm import Session
 
 from app.database.session import get_db
 from app.schemas.risk import (
+    AlertPriorityResponse,
     AssetRiskListResponse,
     AssetRiskResponse,
 )
 from app.services.risk_service import (
+    calculate_alert_priority,
     calculate_all_asset_risks,
     calculate_asset_risk,
 )
@@ -48,3 +50,25 @@ def get_asset_risk(
         )
 
     return risk
+
+
+@router.get(
+    "/alerts/{alert_id}/priority",
+    response_model=AlertPriorityResponse,
+)
+def get_alert_priority(
+    alert_id: int,
+    db: Session = Depends(get_db),
+):
+    priority = calculate_alert_priority(
+        db,
+        alert_id,
+    )
+
+    if priority is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Alert not found",
+        )
+
+    return priority

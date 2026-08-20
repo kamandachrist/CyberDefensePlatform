@@ -30,3 +30,8 @@ class Threat(BaseModel):
         back_populates="threat",
         cascade="all, delete-orphan",
     )
+
+    alerts = relationship(
+        "Alert",
+        back_populates="threat",
+   )

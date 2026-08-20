@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 
+from app.models.alert import Alert
 from app.models.asset import Asset
 from app.models.incident import Incident
 from app.models.vulnerability import Vulnerability
@@ -37,7 +38,6 @@ def get_asset_risk_data(
     }
 
 
-
 def get_all_assets(
     db: Session,
 ):
@@ -45,4 +45,14 @@ def get_all_assets(
         db.query(Asset)
         .order_by(Asset.id)
         .all()
+    )
+
+def get_alert_risk_data(
+    db: Session,
+    alert_id: int,
+):
+    return (
+        db.query(Alert)
+        .filter(Alert.id == alert_id)
+        .first()
     )
